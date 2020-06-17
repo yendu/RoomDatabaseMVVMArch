@@ -1,15 +1,18 @@
 package com.yendu.roomdatabasemvvmarch.Presentation;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionButton fabs;
     RecyclerView recyclerView;
     WordAdapter wordAdapter;
+    public static final int code=2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
         recyclerView=findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.hasFixedSize();
+
+        wordAdapter=new WordAdapter(this);
+        ItemTouchHelper itemTouchHelper=new ItemTouchHelper(new SwipeToDelete(wordAdapter));
+        itemTouchHelper.attachToRecyclerView(recyclerView);
         wordViewModel=new ViewModelProvider(this).get(WordViewModel.class);
         wordViewModel.getAllWords().observe(this, new Observer<List<Word>>() {
             @Override
@@ -49,12 +58,30 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        fabs.setOnClickListener(v->{
+            Intent intent=new Intent(MainActivity.this,NewWordActivity.class);
+            startActivityForResult(intent,code);
+        });
 
 
 
 
 
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==code){
+            if(resultCode==RESULT_OK){
+
+                Word word=new Word(data.getStringExtra("s"));
+                wordViewModel.insert(word);
+            }
+
+        }
+    }
+
     public void delete(Word word){
         wordViewModel.delete(word);
         showUndoSnackBar(word);

@@ -20,7 +20,7 @@ public class WordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     List<Word> mWords;
     Context mContext;
 
-    public WordAdapter(List<Word>words, Context context){
+    public WordAdapter(Context context){
 
         this.mContext=context;
     }
