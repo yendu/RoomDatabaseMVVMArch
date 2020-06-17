@@ -10,16 +10,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.yendu.roomdatabasemvvmarch.Models.Word;
+import com.yendu.roomdatabasemvvmarch.Presentation.MainActivity;
 import com.yendu.roomdatabasemvvmarch.R;
 
 import java.util.List;
 
-public class WordAdapters extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class WordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     List<Word> mWords;
     Context mContext;
 
-    public WordAdapters(List<Word>words,Context context){
+    public WordAdapter(List<Word>words, Context context){
 
         this.mContext=context;
     }
@@ -46,6 +47,12 @@ public class WordAdapters extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
 
 
+    }
+    public void deleteWord(int position){
+
+        Word word=mWords.get(position);
+
+        ((MainActivity)mContext).delete(word);
     }
 
     @Override

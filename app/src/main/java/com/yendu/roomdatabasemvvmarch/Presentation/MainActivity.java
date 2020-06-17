@@ -3,6 +3,7 @@ package com.yendu.roomdatabasemvvmarch.Presentation;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,11 +14,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toolbar;
+import android.view.View;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.yendu.roomdatabasemvvmarch.Models.Word;
-import com.yendu.roomdatabasemvvmarch.Presentation.Adapters.WordAdapters;
+import com.yendu.roomdatabasemvvmarch.Presentation.Adapters.WordAdapter;
 import com.yendu.roomdatabasemvvmarch.R;
 import com.yendu.roomdatabasemvvmarch.ViewModels.WordViewModel;
 
@@ -29,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     WordViewModel wordViewModel;
     FloatingActionButton fabs;
     RecyclerView recyclerView;
-    WordAdapters wordAdapters;
+    WordAdapter wordAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(List<Word> words) {
 
-                wordAdapters.setWords(words);
+                wordAdapter.setWords(words);
 
             }
         });
@@ -53,12 +55,24 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+    public void delete(Word word){
+        wordViewModel.delete(word);
+        showUndoSnackBar(word);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater=getMenuInflater();
         inflater.inflate(R.menu.actions,menu);
         return true;
+    }
+    private void showUndoSnackBar(Word word){
+        Snackbar snackbar=Snackbar.make(new CoordinatorLayout(this),"Undo",Snackbar.LENGTH_LONG);
+        snackbar.setAction("Undo",v -> undoDelete(word));
+        snackbar.show();
+    }
+    private void undoDelete(Word word){
+        wordViewModel.insert(word);
     }
 
     @Override
